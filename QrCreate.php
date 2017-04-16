@@ -13,10 +13,17 @@ class QrCreate
             throw new QrCodeException('gd 扩展未安装');
         self::checkParams($text, $path, $level, $size, $margin);
         $result = false;
-        if ($path != '' && is_string($path))
-            $result = QRcode::png($text, $path, $level, $size, $margin);
-        elseif (empty($path))
-            $result = QRcode::raw($text, false, $level, $size, $margin);
+        if ($path != '' && is_string($path)) {
+            QRcode::png($text, $path, $level, $size, $margin);
+            if(file_exists($path));
+                return true;
+        }else{
+            $result = NULL;
+            ob_start();
+            QRcode::png($text, false, $level, $size, $margin);
+            $result = ob_get_contents();
+            ob_end_clean();
+        }
         return $result;
     }
 
